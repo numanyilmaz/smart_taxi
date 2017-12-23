@@ -64,10 +64,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state_list = [waypoint]    
-        for value in inputs.itervalues():
-           state_list.append(value)
-        state = tuple(state_list)
+        state =  (waypoint, inputs['lights'], inputs['left'], inputs['right'], inputs['oncoming'], deadline)
 
         return state
 
