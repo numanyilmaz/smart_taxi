@@ -47,7 +47,9 @@ class LearningAgent(Agent):
             self.epsilon = 0
             self.alpha = 0
         else:
-            self.epsilon = np.exp(-0.01 * self.paramtr)
+        	self.epsilon = np.exp(-0.01 * self.paramtr) 
+
+            #self.epsilon = self.epsilon - 0.05
 
         self.paramtr += 1
 
@@ -75,7 +77,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state =  (waypoint, inputs['light'], inputs['left'], inputs['right'], inputs['oncoming'])
+        state =  (waypoint, inputs['light'], inputs['left'], inputs['oncoming'])
 
         return state
 
@@ -126,7 +128,10 @@ class LearningAgent(Agent):
         if self.learning == False:
             action = random.choice(self.valid_actions)
         else:
-            action = np.random.choice([value for value in self.Q[state].keys() if self.Q[state][value] == self.get_maxQ(state)])
+            if self.epsilon > np.random.random():
+            	action = random.choice(self.valid_actions)
+            else:
+            	action = np.random.choice([value for value in self.Q[state].keys() if self.Q[state][value] == self.get_maxQ(state)])
 
         # When not learning, choose a random action
         # When learning, choose a random action with 'epsilon' probability
@@ -183,10 +188,10 @@ def run():
     ##############
     # Create the driving agent
     # Flags:
-    #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
+    #   learning   - set to True to force the driving agent to use Q-learning
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, alpha=0.8, epsilon=0.9)
+    agent = env.create_agent(LearningAgent, learning=True, alpha=0.1)
     
     ##############
     # Follow the driving agent
@@ -208,7 +213,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=20, tolerance=0.01)
+    sim.run(n_test=10, tolerance=0.01)
 
 
 if __name__ == '__main__':
